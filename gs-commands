@@ -1,0 +1,27 @@
+./gswin32c.exe -dQuiet -dUseCropBox -dFitPage -dPrinted -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%FK80 Printer" 2.pdf
+
+// 2 | Two Pages
+// 2-1 | One Long Page
+// 2-2 | 800mm doc
+
+// GAP BETWEEN EACH PAGE - 210mm paper
+./gswin32c.exe -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%FK80 Printer" 2.pdf
+
+// WHOLE RECEIPT NOT PRINTED - 210mm paper
+./gswin32c.exe -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%FK80 Printer" 2-1.pdf
+
+// 800mm paper - prints nothing
+./gswin32c.exe -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%FK80 Printer" 2.pdf
+
+// 800mm paper - prints nothing
+./gswin32c.exe -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%FK80 Printer" 2-1.pdf
+
+
+//
+// 2 PAGE DOC / 210mm Paper - TESTS
+//
+
+
+//
+./gswin32c.exe -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%FK80 Printer" 2.pdf
+
