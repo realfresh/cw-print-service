@@ -1,11 +1,10 @@
 import autobind from 'class-autobind';
-import fs from 'fs';
-import path from 'path';
-import shell from 'shelljs';
-import shortid from 'shortid';
-import flatCache from 'flat-cache';
 import { consoleLog } from './utils';
 import cache from './cache';
+
+const fs = require('fs');
+const shell = require("shelljs");
+const shortid = require('shortid');
 
 export default class PrintService {
 
@@ -17,7 +16,7 @@ export default class PrintService {
   }
 
   async create_print_job(config) {
-    const { base64, printers, job_id } = config;
+    const { base64, job_id } = config;
     const jobIdExists = await cache.get(job_id);
     if (!jobIdExists) {
       consoleLog("PRINT JOB", job_id);
@@ -28,18 +27,18 @@ export default class PrintService {
       consoleLog("DUPLICATE JOB ID", job_id);
     }
   }
-
   async print(base64, config) {
     const { printers } = config;
     const { file_path, doc_id } = await this.file_save(base64);
+    setTimeout(() => this.file_remove(file_path), 90000);
     await this.print_ghostscript({ file_path, printers });
-    setTimeout(() => this.file_remove(file_path), 30000);
   }
   async print_ghostscript({ file_path, printers }) {
     const { path_ghostscript } = this;
     const scripts = [];
     printers.forEach((printer) => {
-      scripts.push(`"${path_ghostscript}" -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%${printer.name}"  ${file_path}`);
+      const script = `"${path_ghostscript}" -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%${printer}"  ${file_path}`;
+      scripts.push(script);
     });
     return await this.exec(scripts);
   }

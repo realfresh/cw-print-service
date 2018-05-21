@@ -1,9 +1,7 @@
 const CachemanFile = require('cacheman-file');
-const cache = new CachemanFile({
+const cache = new CachemanFile({});
 
-});
-
-const DEFAULT_TTL = 60 * 60 * 24; // 1 DAY
+const DEFAULT_TTL = 60 * 60 * 12; // 12 HOURS
 
 export default {
   set(key, data, ttl=DEFAULT_TTL) {
