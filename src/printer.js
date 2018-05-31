@@ -31,8 +31,23 @@ export default class PrintService {
     const { printers } = config;
     const { file_path, doc_id } = await this.file_save(base64);
     setTimeout(() => this.file_remove(file_path), 90000);
-    await this.print_ghostscript({ file_path, printers });
+    if (this.operating_system == "linux") {
+      await this.print_cups({ file_path, printers });
+    }
+    else {
+      await this.print_ghostscript({ file_path, printers });
+    }
   }
+
+  async print_cups({ file_path, printers }) {
+    const scripts = [];
+    printers.forEach((printer) => {
+      const script = `lp -p "${printer}" "${file_path}"`;
+      scripts.push(script);
+    });
+    return await this.exec(scripts);
+  }
+
   async print_ghostscript({ file_path, printers }) {
     const { path_ghostscript } = this;
     const scripts = [];
@@ -62,7 +77,6 @@ export default class PrintService {
         console.log("ERROR DELETING FILE", err)
     })
   }
-
   _exec(script) {
     return new Promise((resolve, reject) => {
       shell.exec(script, (code, stdout, stderr) => {
