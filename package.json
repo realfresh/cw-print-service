@@ -2,9 +2,10 @@
   "name": "pushprinter",
   "version": "2.0.0",
   "description": "Automatically print files from servers",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "nodemon --ignore tmp/ --exec babel-node ./src/test"
+    "test": "nodemon --ignore tmp/ --exec babel-node ./src/test",
+    "build": "shx rm -rf dist/ && babel src -d dist"
   },
   "author": "CloudWaitress <admin@cloudwaitress.com>",
   "license": "ISC",
