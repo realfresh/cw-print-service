@@ -1,7 +1,4 @@
-node_modules/
 .idea/
-pushprinter_com.txt
+node_modules/
 assets
 tmp/
-gui/builds
-gui/dist
