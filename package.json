@@ -1,7 +1,7 @@
 {
-  "name": "pushprinter",
-  "version": "2.0.0",
-  "description": "Automatically print files from servers",
+  "name": "cw-print-service",
+  "version": "1.0.0",
+  "description": "",
   "main": "dist/index.js",
   "scripts": {
     "test": "nodemon --ignore tmp/ --exec babel-node ./src/test",
