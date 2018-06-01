@@ -112,10 +112,24 @@ var PrintService = function () {
                 setTimeout(function () {
                   return _this.file_remove(file_path);
                 }, 90000);
-                _context2.next = 9;
+
+                if (!(this.operating_system == "linux")) {
+                  _context2.next = 12;
+                  break;
+                }
+
+                _context2.next = 10;
+                return this.print_cups({ file_path: file_path, printers: printers });
+
+              case 10:
+                _context2.next = 14;
+                break;
+
+              case 12:
+                _context2.next = 14;
                 return this.print_ghostscript({ file_path: file_path, printers: printers });
 
-              case 9:
+              case 14:
               case 'end':
                 return _context2.stop();
             }
@@ -130,15 +144,53 @@ var PrintService = function () {
       return print;
     }()
   }, {
-    key: 'print_ghostscript',
+    key: 'print_cups',
     value: function () {
       var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(_ref4) {
         var file_path = _ref4.file_path,
             printers = _ref4.printers;
-        var path_ghostscript, scripts;
+        var scripts;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
+              case 0:
+                scripts = [];
+
+                printers.forEach(function (printer) {
+                  var script = 'lp -p "' + printer + '" "' + file_path + '"';
+                  console.log("PRINT SCRIPT:", script);
+                  scripts.push(script);
+                });
+                _context3.next = 4;
+                return this.exec(scripts);
+
+              case 4:
+                return _context3.abrupt('return', _context3.sent);
+
+              case 5:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function print_cups(_x4) {
+        return _ref5.apply(this, arguments);
+      }
+
+      return print_cups;
+    }()
+  }, {
+    key: 'print_ghostscript',
+    value: function () {
+      var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(_ref6) {
+        var file_path = _ref6.file_path,
+            printers = _ref6.printers;
+        var path_ghostscript, scripts;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 path_ghostscript = this.path_ghostscript;
                 scripts = [];
@@ -147,22 +199,22 @@ var PrintService = function () {
                   var script = '"' + path_ghostscript + '" -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%' + printer + '"  "' + file_path + '"';
                   scripts.push(script);
                 });
-                _context3.next = 5;
+                _context4.next = 5;
                 return this.exec(scripts);
 
               case 5:
-                return _context3.abrupt('return', _context3.sent);
+                return _context4.abrupt('return', _context4.sent);
 
               case 6:
               case 'end':
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
-      function print_ghostscript(_x4) {
-        return _ref5.apply(this, arguments);
+      function print_ghostscript(_x5) {
+        return _ref7.apply(this, arguments);
       }
 
       return print_ghostscript;
@@ -203,26 +255,26 @@ var PrintService = function () {
   }, {
     key: 'exec',
     value: function () {
-      var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(script) {
+      var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(script) {
         var error, i;
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 if (!(typeof script == 'string')) {
-                  _context4.next = 6;
+                  _context5.next = 6;
                   break;
                 }
 
-                _context4.next = 3;
+                _context5.next = 3;
                 return this._exec(script);
 
               case 3:
-                return _context4.abrupt('return', _context4.sent);
+                return _context5.abrupt('return', _context5.sent);
 
               case 6:
                 if (!((typeof script === 'undefined' ? 'undefined' : _typeof(script)) == 'object')) {
-                  _context4.next = 24;
+                  _context5.next = 24;
                   break;
                 }
 
@@ -233,51 +285,51 @@ var PrintService = function () {
 
               case 9:
                 if (!(i < script.length)) {
-                  _context4.next = 21;
+                  _context5.next = 21;
                   break;
                 }
 
-                _context4.prev = 10;
-                _context4.next = 13;
+                _context5.prev = 10;
+                _context5.next = 13;
                 return this._exec(script[i]);
 
               case 13:
-                _context4.next = 18;
+                _context5.next = 18;
                 break;
 
               case 15:
-                _context4.prev = 15;
-                _context4.t0 = _context4['catch'](10);
+                _context5.prev = 15;
+                _context5.t0 = _context5['catch'](10);
 
                 // CATCH ANY ERRORS MANUALLY TO PREVENT INTERRUPTING PRINTING
-                error = _context4.t0;
+                error = _context5.t0;
 
               case 18:
                 i++;
-                _context4.next = 9;
+                _context5.next = 9;
                 break;
 
               case 21:
                 if (!error) {
-                  _context4.next = 23;
+                  _context5.next = 23;
                   break;
                 }
 
                 throw error;
 
               case 23:
-                return _context4.abrupt('return', true);
+                return _context5.abrupt('return', true);
 
               case 24:
               case 'end':
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, this, [[10, 15]]);
+        }, _callee5, this, [[10, 15]]);
       }));
 
-      function exec(_x5) {
-        return _ref6.apply(this, arguments);
+      function exec(_x6) {
+        return _ref8.apply(this, arguments);
       }
 
       return exec;
