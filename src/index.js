@@ -143,12 +143,16 @@ export default class AppService {
       // GET BASE64 PDF
       const { base64 } = await this.api_get_job_pdf(query);
 
+      console.log("BASE64 FETCHED");
+
       // SUBMIT PRINT JOB TO SERVICE
       await this.printer.create_print_job({
         printers: this.printers,
         base64: base64,
         job_id: job_id,
       });
+
+      console.log("PRINT JOB COMPLETE");
 
       // NOTIFY DASHBOARD IF REQUIRED
       if (notify_restaurant_dashboard)
@@ -161,7 +165,8 @@ export default class AppService {
       this.onCallback("print_job", { event: "success", data: message.data });
     }
     catch(e) {
-      console.log("PRINT ERROR", e.response ? e.response : e);
+      console.log("PRINT ERROR");
+      console.log(e.response ? e.response : e);
       data.error = true;
 
       // NOTIFY DASHBOARD OF ERROR

@@ -194,14 +194,21 @@ var AppService = function () {
               case 8:
                 _ref3 = _context.sent;
                 base64 = _ref3.base64;
-                _context.next = 12;
+
+
+                console.log("BASE64 FETCHED");
+
+                // SUBMIT PRINT JOB TO SERVICE
+                _context.next = 13;
                 return this.printer.create_print_job({
                   printers: this.printers,
                   base64: base64,
                   job_id: job_id
                 });
 
-              case 12:
+              case 13:
+
+                console.log("PRINT JOB COMPLETE");
 
                 // NOTIFY DASHBOARD IF REQUIRED
                 if (notify_restaurant_dashboard) this.publish_restaurant_update(data);
@@ -211,14 +218,15 @@ var AppService = function () {
 
                 // LOG
                 this.onCallback("print_job", { event: "success", data: message.data });
-                _context.next = 25;
+                _context.next = 28;
                 break;
 
-              case 17:
-                _context.prev = 17;
+              case 19:
+                _context.prev = 19;
                 _context.t0 = _context['catch'](5);
 
-                console.log("PRINT ERROR", _context.t0.response ? _context.t0.response : _context.t0);
+                console.log("PRINT ERROR");
+                console.log(_context.t0.response ? _context.t0.response : _context.t0);
                 data.error = true;
 
                 // NOTIFY DASHBOARD OF ERROR
@@ -231,12 +239,12 @@ var AppService = function () {
                 this.onCallback("print_job", { event: "error", data: _context.t0 });
                 this.onCallback("error", _context.t0);
 
-              case 25:
+              case 28:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[5, 17]]);
+        }, _callee, this, [[5, 19]]);
       }));
 
       function handle_print_job(_x2) {
