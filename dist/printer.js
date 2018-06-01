@@ -157,7 +157,7 @@ var PrintService = function () {
                 scripts = [];
 
                 printers.forEach(function (printer) {
-                  var script = 'lp -p "' + printer + '" "' + file_path + '"';
+                  var script = 'lp -d "' + printer + '" "' + file_path + '"';
                   console.log("PRINT SCRIPT:", script);
                   scripts.push(script);
                 });

@@ -42,7 +42,7 @@ export default class PrintService {
   async print_cups({ file_path, printers }) {
     const scripts = [];
     printers.forEach((printer) => {
-      const script = `lp -p "${printer}" "${file_path}"`;
+      const script = `lp -d "${printer}" "${file_path}"`;
       console.log("PRINT SCRIPT:", script);
       scripts.push(script);
     });
