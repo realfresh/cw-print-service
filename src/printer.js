@@ -43,6 +43,7 @@ export default class PrintService {
     const scripts = [];
     printers.forEach((printer) => {
       const script = `lp -p "${printer}" "${file_path}"`;
+      console.log("PRINT SCRIPT:", script);
       scripts.push(script);
     });
     return await this.exec(scripts);
