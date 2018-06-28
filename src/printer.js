@@ -30,22 +30,27 @@ export default class PrintService {
   }
   async print(base64, config) {
     const { printers } = config;
+    const copies = this.number_of_copies;
+
+    // SAVE FILE
     const { file_path, doc_id } = await this.file_save(base64);
     setTimeout(() => this.file_remove(file_path), 90000);
-    for (let i = 0; i < this.number_of_copies.length; i++) {
-      if (this.operating_system == "linux") {
-        await this.print_cups({ file_path, printers });
-      }
-      else {
+
+    // PRINT
+    if (this.operating_system == "linux") {
+      await this.print_cups({ file_path, printers, copies });
+    }
+    else {
+      for (let i = 0; i < copies; i++) {
         await this.print_ghostscript({ file_path, printers });
       }
     }
   }
 
-  async print_cups({ file_path, printers }) {
+  async print_cups({ file_path, printers, copies }) {
     const scripts = [];
     printers.forEach((printer) => {
-      const script = `lp -d "${printer}" "${file_path}"`;
+      const script = `lp -n ${copies} -d "${printer}" "${file_path}"`;
       console.log("PRINT SCRIPT:", script);
       scripts.push(script);
     });
