@@ -26,6 +26,7 @@ export default class AppService {
       // path_ghostscript: opts.path_ghostscript,
       path_save_folder: opts.path_save_folder,
       operating_system: opts.operating_system,
+      number_of_copies: opts.number_of_copies || 1,
     });
     this.printers = [];
     this.set_config(opts); // GHOSTSCRIPT SET HERE
@@ -197,7 +198,12 @@ export default class AppService {
   // PUBLISHERS
   publish_restaurant_update(messageData) {
     consoleLog("NOTIFY RESTAURANT");
-    this.channel_update_restaurant.publish("printer:job-update", messageData)
+    this.channel_update_restaurant.publish("printer:job-update", messageData, err => {
+      if (err) {
+        console.log(err);
+        this.onCallback("error", err);
+      }
+    })
   }
   publish_server_update(messageData) {
     consoleLog("NOTIFY SERVER");
@@ -222,7 +228,7 @@ export default class AppService {
   }
 
   // SETTERS & UTILS
-  set_config({ printers, api_key, ghostscript_path }) {
+  set_config({ printers, api_key, ghostscript_path, number_of_copies }) {
     if (api_key) {
       this.api_key = api_key;
       const api_key_parts = api_key.split("|");
@@ -236,6 +242,9 @@ export default class AppService {
     if (ghostscript_path) {
       this.path_ghostscript = ghostscript_path;
       this.printer.path_ghostscript = ghostscript_path;
+    }
+    if (number_of_copies) {
+      this.printer.number_of_copies = number_of_copies || 1;
     }
     console.log("SET CONFIG SERVICE", printers, api_key);
   }

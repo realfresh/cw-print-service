@@ -13,6 +13,7 @@ export default class PrintService {
     this.path_ghostscript = opts.path_ghostscript;
     this.path_save_folder = opts.path_save_folder;
     this.operating_system = opts.operating_system;
+    this.number_of_copies = opts.number_of_copies || 1;
   }
 
   async create_print_job(config) {
@@ -31,11 +32,13 @@ export default class PrintService {
     const { printers } = config;
     const { file_path, doc_id } = await this.file_save(base64);
     setTimeout(() => this.file_remove(file_path), 90000);
-    if (this.operating_system == "linux") {
-      await this.print_cups({ file_path, printers });
-    }
-    else {
-      await this.print_ghostscript({ file_path, printers });
+    for (let i = 0; i < this.number_of_copies.length; i++) {
+      if (this.operating_system == "linux") {
+        await this.print_cups({ file_path, printers });
+      }
+      else {
+        await this.print_ghostscript({ file_path, printers });
+      }
     }
   }
 
