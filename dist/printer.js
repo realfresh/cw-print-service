@@ -36,6 +36,7 @@ var PrintService = function () {
     this.path_ghostscript = opts.path_ghostscript;
     this.path_save_folder = opts.path_save_folder;
     this.operating_system = opts.operating_system;
+    this.number_of_copies = opts.number_of_copies || 1;
   }
 
   _createClass(PrintService, [{
@@ -94,17 +95,21 @@ var PrintService = function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(base64, config) {
         var _this = this;
 
-        var printers, _ref3, file_path, doc_id;
+        var printers, copies, _ref3, file_path, doc_id, i;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 printers = config.printers;
-                _context2.next = 3;
+                copies = this.number_of_copies;
+
+                // SAVE FILE
+
+                _context2.next = 4;
                 return this.file_save(base64);
 
-              case 3:
+              case 4:
                 _ref3 = _context2.sent;
                 file_path = _ref3.file_path;
                 doc_id = _ref3.doc_id;
@@ -113,23 +118,39 @@ var PrintService = function () {
                   return _this.file_remove(file_path);
                 }, 90000);
 
+                console.log("PRINT COPIES", copies);
+                // PRINT
+
                 if (!(this.operating_system == "linux")) {
-                  _context2.next = 12;
+                  _context2.next = 14;
                   break;
                 }
 
-                _context2.next = 10;
-                return this.print_cups({ file_path: file_path, printers: printers });
-
-              case 10:
-                _context2.next = 14;
-                break;
+                _context2.next = 12;
+                return this.print_cups({ file_path: file_path, printers: printers, copies: copies });
 
               case 12:
-                _context2.next = 14;
-                return this.print_ghostscript({ file_path: file_path, printers: printers });
+                _context2.next = 21;
+                break;
 
               case 14:
+                i = 0;
+
+              case 15:
+                if (!(i < copies)) {
+                  _context2.next = 21;
+                  break;
+                }
+
+                _context2.next = 18;
+                return this.print_ghostscript({ file_path: file_path, printers: printers });
+
+              case 18:
+                i++;
+                _context2.next = 15;
+                break;
+
+              case 21:
               case 'end':
                 return _context2.stop();
             }
@@ -148,7 +169,8 @@ var PrintService = function () {
     value: function () {
       var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(_ref4) {
         var file_path = _ref4.file_path,
-            printers = _ref4.printers;
+            printers = _ref4.printers,
+            copies = _ref4.copies;
         var scripts;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -157,7 +179,7 @@ var PrintService = function () {
                 scripts = [];
 
                 printers.forEach(function (printer) {
-                  var script = 'lp -d "' + printer + '" "' + file_path + '"';
+                  var script = 'lp -n ' + copies + ' -d "' + printer + '" "' + file_path + '"';
                   console.log("PRINT SCRIPT:", script);
                   scripts.push(script);
                 });

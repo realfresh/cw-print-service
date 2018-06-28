@@ -48,7 +48,8 @@ var AppService = function () {
       this.printer = new _printer2.default({
         // path_ghostscript: opts.path_ghostscript,
         path_save_folder: opts.path_save_folder,
-        operating_system: opts.operating_system
+        operating_system: opts.operating_system,
+        number_of_copies: opts.number_of_copies || 1
       });
       this.printers = [];
       this.set_config(opts); // GHOSTSCRIPT SET HERE
@@ -273,19 +274,26 @@ var AppService = function () {
   }, {
     key: 'publish_restaurant_update',
     value: function publish_restaurant_update(messageData) {
+      var _this4 = this;
+
       (0, _utils.consoleLog)("NOTIFY RESTAURANT");
-      this.channel_update_restaurant.publish("printer:job-update", messageData);
+      this.channel_update_restaurant.publish("printer:job-update", messageData, function (err) {
+        if (err) {
+          console.log(err);
+          _this4.onCallback("error", err);
+        }
+      });
     }
   }, {
     key: 'publish_server_update',
     value: function publish_server_update(messageData) {
-      var _this4 = this;
+      var _this5 = this;
 
       (0, _utils.consoleLog)("NOTIFY SERVER");
       this.channel_update_server.publish("update", messageData, function (err) {
         if (err) {
           console.log(err);
-          _this4.onCallback("error", err);
+          _this5.onCallback("error", err);
         }
       });
     }
@@ -336,7 +344,8 @@ var AppService = function () {
     value: function set_config(_ref5) {
       var printers = _ref5.printers,
           api_key = _ref5.api_key,
-          ghostscript_path = _ref5.ghostscript_path;
+          ghostscript_path = _ref5.ghostscript_path,
+          number_of_copies = _ref5.number_of_copies;
 
       if (api_key) {
         this.api_key = api_key;
@@ -354,7 +363,10 @@ var AppService = function () {
         this.path_ghostscript = ghostscript_path;
         this.printer.path_ghostscript = ghostscript_path;
       }
-      console.log("SET CONFIG SERVICE", printers, api_key);
+      if (number_of_copies) {
+        this.printer.number_of_copies = number_of_copies || 1;
+      }
+      console.log("SET CONFIG SERVICE", printers, api_key, number_of_copies);
     }
   }, {
     key: 'set_state',
