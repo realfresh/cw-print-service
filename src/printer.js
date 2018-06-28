@@ -36,6 +36,7 @@ export default class PrintService {
     const { file_path, doc_id } = await this.file_save(base64);
     setTimeout(() => this.file_remove(file_path), 90000);
 
+    console.log("PRINT COPIES", copies);
     // PRINT
     if (this.operating_system == "linux") {
       await this.print_cups({ file_path, printers, copies });

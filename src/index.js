@@ -246,7 +246,7 @@ export default class AppService {
     if (number_of_copies) {
       this.printer.number_of_copies = number_of_copies || 1;
     }
-    console.log("SET CONFIG SERVICE", printers, api_key);
+    console.log("SET CONFIG SERVICE", printers, api_key, number_of_copies);
   }
   set_state(state) {
     this.state = state;
