@@ -138,7 +138,7 @@ var PrintService = function () {
                 return this.print_cups({ file_path: file_path, printers: printers, copies: copies });
 
               case 12:
-                _context2.next = 23;
+                _context2.next = 21;
                 break;
 
               case 14:
@@ -146,7 +146,7 @@ var PrintService = function () {
 
               case 15:
                 if (!(i < copies)) {
-                  _context2.next = 23;
+                  _context2.next = 21;
                   break;
                 }
 
@@ -154,15 +154,11 @@ var PrintService = function () {
                 return this.print_ghostscript({ file_path: file_path, printers: printers, copies: copies });
 
               case 18:
-                _context2.next = 20;
-                return wait(2000);
-
-              case 20:
                 i++;
                 _context2.next = 15;
                 break;
 
-              case 23:
+              case 21:
               case 'end':
                 return _context2.stop();
             }

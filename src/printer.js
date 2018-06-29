@@ -47,7 +47,6 @@ export default class PrintService {
     else {
       for (let i = 0; i < copies; i++) {
         await this.print_ghostscript({ file_path, printers, copies });
-        await wait(2000);
       }
     }
   }
