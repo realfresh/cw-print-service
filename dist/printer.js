@@ -14,10 +14,6 @@ var _classAutobind2 = _interopRequireDefault(_classAutobind);
 
 var _utils = require('./utils');
 
-var _cache = require('./cache');
-
-var _cache2 = _interopRequireDefault(_cache);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -45,6 +41,7 @@ var PrintService = function () {
     this.path_save_folder = opts.path_save_folder;
     this.operating_system = opts.operating_system;
     this.number_of_copies = opts.number_of_copies || 1;
+    this.cache = opts.cache;
   }
 
   _createClass(PrintService, [{
@@ -58,7 +55,7 @@ var PrintService = function () {
               case 0:
                 base64 = config.base64, job_id = config.job_id;
                 _context.next = 3;
-                return _cache2.default.get(job_id);
+                return this.cache.get(job_id);
 
               case 3:
                 jobIdExists = _context.sent;
@@ -74,7 +71,7 @@ var PrintService = function () {
 
               case 8:
                 _context.next = 10;
-                return _cache2.default.set(job_id, { error: false });
+                return this.cache.set(job_id, { error: false });
 
               case 10:
                 _context.next = 13;

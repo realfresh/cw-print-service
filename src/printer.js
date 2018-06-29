@@ -1,6 +1,5 @@
 import autobind from 'class-autobind';
 import { consoleLog } from './utils';
-import cache from './cache';
 
 const fs = require('fs');
 const shell = require("shelljs");
@@ -16,15 +15,16 @@ export default class PrintService {
     this.path_save_folder = opts.path_save_folder;
     this.operating_system = opts.operating_system;
     this.number_of_copies = opts.number_of_copies || 1;
+    this.cache = opts.cache;
   }
 
   async create_print_job(config) {
     const { base64, job_id } = config;
-    const jobIdExists = await cache.get(job_id);
+    const jobIdExists = await this.cache.get(job_id);
     if (!jobIdExists) {
       consoleLog("PRINT JOB", job_id);
       await this.print(base64, config);
-      await cache.set(job_id, { error: false });
+      await this.cache.set(job_id, { error: false });
     }
     else {
       consoleLog("DUPLICATE JOB ID", job_id);

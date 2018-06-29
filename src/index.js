@@ -1,6 +1,7 @@
 import { consoleLog } from './utils';
 import PrintService from './printer';
 import autobind from 'class-autobind';
+import CacheCreator from './cache';
 
 const axios = require('axios');
 const exitHook = require('async-exit-hook');
@@ -18,6 +19,7 @@ export default class AppService {
 
   init(opts) {
     // SET OPTIONS
+    this.cache = CacheCreator(opts.cache_path);
     this.api_url_base_64 = opts.api_url_base_64;
     this.api_url_ably_auth = opts.api_url_ably_auth;
     this.path_save_folder = opts.path_save_folder;
@@ -27,6 +29,7 @@ export default class AppService {
       path_save_folder: opts.path_save_folder,
       operating_system: opts.operating_system,
       number_of_copies: opts.number_of_copies || 1,
+      cache: this.cache,
     });
     this.printers = [];
     this.set_config(opts); // GHOSTSCRIPT SET HERE

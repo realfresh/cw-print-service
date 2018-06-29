@@ -16,6 +16,10 @@ var _classAutobind = require('class-autobind');
 
 var _classAutobind2 = _interopRequireDefault(_classAutobind);
 
+var _cache = require('./cache');
+
+var _cache2 = _interopRequireDefault(_cache);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -41,6 +45,7 @@ var AppService = function () {
     key: 'init',
     value: function init(opts) {
       // SET OPTIONS
+      this.cache = (0, _cache2.default)(opts.cache_path);
       this.api_url_base_64 = opts.api_url_base_64;
       this.api_url_ably_auth = opts.api_url_ably_auth;
       this.path_save_folder = opts.path_save_folder;
@@ -49,7 +54,8 @@ var AppService = function () {
         // path_ghostscript: opts.path_ghostscript,
         path_save_folder: opts.path_save_folder,
         operating_system: opts.operating_system,
-        number_of_copies: opts.number_of_copies || 1
+        number_of_copies: opts.number_of_copies || 1,
+        cache: this.cache
       });
       this.printers = [];
       this.set_config(opts); // GHOSTSCRIPT SET HERE
