@@ -6,6 +6,8 @@ const fs = require('fs');
 const shell = require("shelljs");
 const shortid = require('shortid');
 
+const wait = duration =>  { return new Promise((resolve) => setTimeout(() => { resolve() }, duration)); }
+
 export default class PrintService {
 
   constructor(opts) {
@@ -28,6 +30,7 @@ export default class PrintService {
       consoleLog("DUPLICATE JOB ID", job_id);
     }
   }
+
   async print(base64, config) {
     const { printers } = config;
     const copies = this.number_of_copies;
@@ -43,7 +46,8 @@ export default class PrintService {
     }
     else {
       for (let i = 0; i < copies; i++) {
-        await this.print_ghostscript({ file_path, printers });
+        await this.print_ghostscript({ file_path, printers, copies });
+        await wait(2000);
       }
     }
   }
@@ -58,11 +62,11 @@ export default class PrintService {
     return await this.exec(scripts);
   }
 
-  async print_ghostscript({ file_path, printers }) {
+  async print_ghostscript({ file_path, printers, copies }) {
     const { path_ghostscript } = this;
     const scripts = [];
     printers.forEach((printer) => {
-      const script = `"${path_ghostscript}" -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%${printer}"  "${file_path}"`;
+      const script = `"${path_ghostscript}" -dQuiet -dBATCH -dNOPAUSE -d.IgnoreNumCopies=true -dNOTRANSPARENCY -sDEVICE=mswinpr2 -sOutputFile="%printer%${printer}"  "${file_path}"`;
       scripts.push(script);
     });
     return await this.exec(scripts);

@@ -28,6 +28,14 @@ var fs = require('fs');
 var shell = require("shelljs");
 var shortid = require('shortid');
 
+var wait = function wait(duration) {
+  return new Promise(function (resolve) {
+    return setTimeout(function () {
+      resolve();
+    }, duration);
+  });
+};
+
 var PrintService = function () {
   function PrintService(opts) {
     _classCallCheck(this, PrintService);
@@ -130,7 +138,7 @@ var PrintService = function () {
                 return this.print_cups({ file_path: file_path, printers: printers, copies: copies });
 
               case 12:
-                _context2.next = 21;
+                _context2.next = 23;
                 break;
 
               case 14:
@@ -138,19 +146,23 @@ var PrintService = function () {
 
               case 15:
                 if (!(i < copies)) {
-                  _context2.next = 21;
+                  _context2.next = 23;
                   break;
                 }
 
                 _context2.next = 18;
-                return this.print_ghostscript({ file_path: file_path, printers: printers });
+                return this.print_ghostscript({ file_path: file_path, printers: printers, copies: copies });
 
               case 18:
+                _context2.next = 20;
+                return wait(2000);
+
+              case 20:
                 i++;
                 _context2.next = 15;
                 break;
 
-              case 21:
+              case 23:
               case 'end':
                 return _context2.stop();
             }
@@ -208,7 +220,8 @@ var PrintService = function () {
     value: function () {
       var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(_ref6) {
         var file_path = _ref6.file_path,
-            printers = _ref6.printers;
+            printers = _ref6.printers,
+            copies = _ref6.copies;
         var path_ghostscript, scripts;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
@@ -218,7 +231,7 @@ var PrintService = function () {
                 scripts = [];
 
                 printers.forEach(function (printer) {
-                  var script = '"' + path_ghostscript + '" -dQuiet -dBATCH -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile="%printer%' + printer + '"  "' + file_path + '"';
+                  var script = '"' + path_ghostscript + '" -dQuiet -dBATCH -dNOPAUSE -d.IgnoreNumCopies=true -dNOTRANSPARENCY -sDEVICE=mswinpr2 -sOutputFile="%printer%' + printer + '"  "' + file_path + '"';
                   scripts.push(script);
                 });
                 _context4.next = 5;
