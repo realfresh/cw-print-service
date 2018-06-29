@@ -1,5 +1,12 @@
 const CachemanFile = require('cacheman-file');
-const cache = new CachemanFile({});
+
+const opts = {};
+
+if (process.platform == "win32" && process.type == "browser") {
+  opts.tmpDir = "%appdata%/PushPrinter/tmp";
+}
+
+const cache = new CachemanFile(opts);
 
 const DEFAULT_TTL = 60 * 60 * 12; // 12 HOURS
 

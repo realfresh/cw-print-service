@@ -1,10 +1,17 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var CachemanFile = require('cacheman-file');
-var cache = new CachemanFile({});
+
+var opts = {};
+
+if (process.platform == "win32" && process.type == "browser") {
+  opts.tmpDir = "%appdata%/PushPrinter/tmp";
+}
+
+var cache = new CachemanFile(opts);
 
 var DEFAULT_TTL = 60 * 60 * 12; // 12 HOURS
 
