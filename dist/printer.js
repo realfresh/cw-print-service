@@ -122,7 +122,6 @@ var PrintService = function () {
                 setTimeout(function () {
                   return _this.file_remove(file_path);
                 }, 90000);
-
                 console.log("PRINT COPIES", copies);
                 // PRINT
 
@@ -184,9 +183,11 @@ var PrintService = function () {
                 scripts = [];
 
                 printers.forEach(function (printer) {
-                  var script = 'lp -n ' + copies + ' -d "' + printer + '" "' + file_path + '"';
-                  console.log("PRINT SCRIPT:", script);
-                  scripts.push(script);
+                  for (var i = 0; i < copies; i++) {
+                    var script = 'lp -d "' + printer + '" "' + file_path + '"';
+                    console.log("PRINT SCRIPT:", script);
+                    scripts.push(script);
+                  }
                 });
                 _context3.next = 4;
                 return this.exec(scripts);
@@ -255,6 +256,7 @@ var PrintService = function () {
       return new Promise(function (resolve, reject) {
         var doc_id = shortid.generate();
         var file_path = path_save_folder + '/' + doc_id + '.pdf';
+        console.log("SAVE FILE", path_save_folder);
         fs.writeFile(file_path, base64, 'base64', function (err) {
           if (err) reject(err);else resolve({ file_path: file_path, doc_id: doc_id });
         });

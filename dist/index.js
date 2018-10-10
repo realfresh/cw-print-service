@@ -177,7 +177,7 @@ var AppService = function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(message) {
         var fromHistory = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-        var data, job_id, query, notify_restaurant_dashboard, _ref3, base64;
+        var data, job_id, query, notify_restaurant_dashboard, _ref3, base64, width, height;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -201,19 +201,21 @@ var AppService = function () {
               case 8:
                 _ref3 = _context.sent;
                 base64 = _ref3.base64;
+                width = _ref3.width;
+                height = _ref3.height;
 
 
-                console.log("BASE64 FETCHED");
+                console.log("BASE64 FETCHED", width, height);
 
                 // SUBMIT PRINT JOB TO SERVICE
-                _context.next = 13;
+                _context.next = 15;
                 return this.printer.create_print_job({
                   printers: this.printers,
                   base64: base64,
                   job_id: job_id
                 });
 
-              case 13:
+              case 15:
 
                 console.log("PRINT JOB COMPLETE");
 
@@ -225,11 +227,11 @@ var AppService = function () {
 
                 // LOG
                 this.onCallback("print_job", { event: "success", data: message.data });
-                _context.next = 28;
+                _context.next = 30;
                 break;
 
-              case 19:
-                _context.prev = 19;
+              case 21:
+                _context.prev = 21;
                 _context.t0 = _context['catch'](5);
 
                 console.log("PRINT ERROR");
@@ -246,12 +248,12 @@ var AppService = function () {
                 this.onCallback("print_job", { event: "error", data: _context.t0 });
                 this.onCallback("error", _context.t0);
 
-              case 28:
+              case 30:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[5, 19]]);
+        }, _callee, this, [[5, 21]]);
       }));
 
       function handle_print_job(_x2) {

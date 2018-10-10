@@ -4,7 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "nodemon --ignore tmp/ --exec babel-node ./src/test",
+    "test": "nodemon --ignore tmp/ --exec babel-node ./tests/index.test.js",
+    "print": "babel-node ./tests/print.test.js",
     "build": "shx rm -rf dist/ && babel src -d dist"
   },
   "author": "CloudWaitress <admin@cloudwaitress.com>",
@@ -22,6 +23,7 @@
     "babel-runtime": "^6.23.0",
     "concurrently": "^3.5.1",
     "cross-env": "^5.1.5",
+    "jest": "^23.5.0",
     "nodemon": "^1.17.4",
     "shx": "^0.2.2"
   },
@@ -31,6 +33,7 @@
     "axios": "^0.18.0",
     "cacheman-file": "^0.2.1",
     "class-autobind": "^0.1.4",
+    "jimp": "^0.5.3",
     "raven": "^2.6.2",
     "shelljs": "^0.8.2",
     "shortid": "^2.2.8"

@@ -38,7 +38,6 @@ export default class PrintService {
     // SAVE FILE
     const { file_path, doc_id } = await this.file_save(base64);
     setTimeout(() => this.file_remove(file_path), 90000);
-
     console.log("PRINT COPIES", copies);
     // PRINT
     if (this.operating_system == "linux") {
@@ -54,9 +53,11 @@ export default class PrintService {
   async print_cups({ file_path, printers, copies }) {
     const scripts = [];
     printers.forEach((printer) => {
-      const script = `lp -n ${copies} -d "${printer}" "${file_path}"`;
-      console.log("PRINT SCRIPT:", script);
-      scripts.push(script);
+      for (let i = 0; i < copies; i++) {
+        const script = `lp -d "${printer}" "${file_path}"`;
+        console.log("PRINT SCRIPT:", script);
+        scripts.push(script);
+      }
     });
     return await this.exec(scripts);
   }
@@ -76,6 +77,7 @@ export default class PrintService {
     return new Promise((resolve, reject) => {
       const doc_id = shortid.generate();
       const file_path = `${path_save_folder}/${doc_id}.pdf`;
+      console.log("SAVE FILE", path_save_folder);
       fs.writeFile(file_path, base64, 'base64', (err) => {
         if (err)
           reject(err);

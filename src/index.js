@@ -145,9 +145,9 @@ export default class AppService {
 
     try {
       // GET BASE64 PDF
-      const { base64 } = await this.api_get_job_pdf(query);
+      const { base64, width, height } = await this.api_get_job_pdf(query);
 
-      console.log("BASE64 FETCHED");
+      console.log("BASE64 FETCHED", width, height);
 
       // SUBMIT PRINT JOB TO SERVICE
       await this.printer.create_print_job({
