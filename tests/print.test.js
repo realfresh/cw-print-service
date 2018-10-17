@@ -10,8 +10,8 @@ const PDF_PRINTER_EXE = "C:\\Users\\danknugget\\Documents\\CloudWaitressApps\\vs
 const PRINTER_NAME = "FK80 Printer";
 
 const ORDERS = [
-  { restaurant_id: "HyhFmrL2g", number: "648" },
-  // { restaurant_id: "HyhFmrL2g", number: "649" },
+  //{ restaurant_id: "HyhFmrL2g", number: "648" },
+  { restaurant_id: "HyhFmrL2g", number: "649" },
   // { restaurant_id: "HyhFmrL2g", number: "650" },
 ];
 
@@ -77,14 +77,20 @@ const splitImage = async ({ number, imageBase64, deviceScaleFactor, baseImageWid
 
   const baseImage = await jimp.read(file_path);
 
+  baseImage.autocrop({
+    tolerance: 0,
+    cropOnlyFrames: false,
+    // cropSymmetric?: boolean;
+    // leaveBorder?: number;
+  });
 
   const actualWidth = baseImage.bitmap.width; // the width of the image
   const actualHeight = baseImage.bitmap.height; // the height of the image
 
   const actualScaleFactor = actualWidth / baseImageWidth;
 
-  const adjustedBaseWidth = baseImageWidth * actualScaleFactor;
-  const adjustedBaseHeight = baseImageHeight * actualScaleFactor;
+  const adjustedBaseWidth = baseImageWidth * actualScaleFactor; // wrong
+  const adjustedBaseHeight = baseImageHeight * actualScaleFactor; // wrong
 
   console.log(`
     BASE WIDTH: ${baseImageWidth}
@@ -103,7 +109,7 @@ const splitImage = async ({ number, imageBase64, deviceScaleFactor, baseImageWid
 
   if (actualHeight > adjustedBaseHeight) {
     // SPLIT IMAGES
-
+    console.log("SPLIT IMAGE");
     const fileNames = [];
 
     const cropX = 0;
@@ -127,7 +133,7 @@ const splitImage = async ({ number, imageBase64, deviceScaleFactor, baseImageWid
 
       img.crop(cropX, cropY, cropWidth, cropHeight);
 
-      const file = __dirname + `/img-${splitCount}.png`;
+      const file = __dirname + `/img-${number}-${splitCount}.png`;
       fileNames.push(file);
       await img.writeAsync(file);
 
@@ -139,10 +145,20 @@ const splitImage = async ({ number, imageBase64, deviceScaleFactor, baseImageWid
 
   }
   else {
-    // RETURN SINGLE
+    // RETURN SINGLE IMAGE AT FULL CORRECT LENGTH
+    /*
+    img.autocrop({
+      tolerance: 0,
+      cropOnlyFrames: false,
+      // cropSymmetric?: boolean;
+      // leaveBorder?: number;
+    });
+    */
+    console.log("SINGLE");
+    const actualFullHeight = actualScaleFactor * baseImageHeight;
     const img = baseImage.clone();
-    img.crop(0, 0, actualWidth, adjustedBaseHeight);
-    const file = __dirname + `/img-0.png`;
+    img.crop(0, 0, actualWidth, actualFullHeight);
+    const file = __dirname + `/img-${number}-0.png`;
     await img.writeAsync(file);
     return [ file ]
   }
@@ -150,7 +166,6 @@ const splitImage = async ({ number, imageBase64, deviceScaleFactor, baseImageWid
 };
 
 const execute = async () => {
-
   for (let i = 0; i < ORDERS.length; i++) {
 
     const query = ORDERS[i];
@@ -167,8 +182,6 @@ const execute = async () => {
       width, // mm
 
     } = await getPDF(query);
-
-    const { file_path } = await saveImage(base64, query.number);
 
     const files = await splitImage({
       imageBase64,
@@ -187,7 +200,7 @@ const execute = async () => {
 
     console.log(files);
 
-    const d = await saveFile(base64, query.number);
+    // const d = await saveFile(base64, query.number);
 
     // console.log(imageBase64);
     /*

@@ -237,7 +237,7 @@ export default class AppService {
       const api_key_parts = api_key.split("|");
       this.r_id = api_key_parts[0];
       this.r_print_config_id = api_key_parts[1];
-      this.r_api_key = api_key_parts[1];
+      this.r_api_key = api_key_parts[2];
     }
     if (printers) {
       this.printers = printers.filter( p => !!p );

@@ -1,0 +1,63 @@
+{
+    "extends": "./node_modules/@sentry/typescript/tsconfig.json",
+    "compilerOptions": {
+        
+        "baseUrl": ".",
+        "rootDir": ".",
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "inlineSources": true,
+        "sourceRoot": "/",
+
+        /* MODULES */
+        "module": "commonjs",
+        "target": "es6",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "lib": [
+            "esnext",
+            "dom"
+        ],
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+
+        /* Strict Type-Checking Options */
+        "strict": true, /* Enable all strict type-checking options. */
+        "noImplicitAny": true, /* Raise error on expressions and declarations with an implied 'any' type. */
+        "strictNullChecks": true, /* Enable strict null checks. */
+        "noImplicitThis": true, /* Raise error on 'this' expressions with an implied 'any' type. */
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "removeComments": true,
+
+        /* Additional Checks */
+        "noUnusedLocals": false, /* Report errors on unused locals. */
+        "noUnusedParameters": false, /* Report errors on unused parameters. */
+        "noImplicitReturns": false, /* Report error when not all code paths in function return a value. */
+        "noFallthroughCasesInSwitch": true,
+        
+        "plugins": [
+            {
+                "name": "tslint-language-service",
+                "disableNoUnusedVariableRule": false,
+                "supressWhileTypeErrorsPresent": false
+            }
+        ]
+
+    },
+
+    "include": [
+        "./src/**/*",
+        "./old/**/*",
+        "./libs/common/utils/logger",
+        "./libs/common/components/styled/theme.d.ts",
+        "./libs/common/types/core",
+        "./libs/common/types/api",
+        "./libs/common/types/schema"
+    ],
+    "exclude": [
+        "node_modules",
+        "node_modules/jimp"
+    ]
+    
+}
