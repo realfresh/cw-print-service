@@ -57,8 +57,9 @@ export class AppService {
     this.job_number = 1;
     this.printers = [];
     this.printer = new PrintService({
-      cache: this.cache,
       os: this.os,
+      cache: this.cache,
+      gm: opts.paths.gm,
       save_folder: opts.paths.save,
     });
     exitHook(this.stop);

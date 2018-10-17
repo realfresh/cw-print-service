@@ -7,6 +7,7 @@ export interface AppServiceOptions {
   os: OperatingSystem;
   copies: number;
   paths: {
+    gm: string;
     save: string;
   };
   api: {
@@ -20,6 +21,7 @@ export interface PrintServiceOptions {
   os: OperatingSystem;
   save_folder: string;
   cache: ReturnType<typeof CacheCreator>;
+  gm: string;
 }
 
 export interface AppHandlePrinterJobOptions {

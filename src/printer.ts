@@ -2,8 +2,8 @@ import path from "path";
 import fs from "fs";
 import shell from "shelljs";
 import shortid from "shortid";
-import sharp from "sharp";
 import debug from "debug";
+import imageSize from "image-size";
 const autobind = require("class-autobind").default;
 import { logger } from "../libs/common/utils/logger";
 import {CacheCreator} from "./cache";
@@ -13,12 +13,14 @@ const log = debug("PRINTER");
 
 export class PrintService {
 
+  public gm: string;
   public print_cli: string;
   public save_folder: string;
   public cache: ReturnType<typeof CacheCreator>;
 
   constructor(opts: PrintServiceOptions) {
     autobind(this);
+    this.gm = opts.gm;
     this.cache = opts.cache;
     this.save_folder = opts.save_folder;
     this.print_cli = path.resolve(__dirname, "../resources/PrintCLI.exe");
@@ -31,7 +33,7 @@ export class PrintService {
     }
 
     const { printers, copies, width, height } = data;
-    const image_files = await this.image_split_n_save_sharp(data);
+    const image_files = await this.image_split_n_save_gm(data);
 
     const scripts: string[] = [];
 
@@ -170,6 +172,7 @@ export class PrintService {
 
   }
   */
+  /*
   private async image_split_n_save_sharp(data: APIPrintingClientOrderToImageResponse) {
     const { base64, width, height } = data; // deviceScaleFactor
     const { file_path, doc_id } = await this.file_save(base64, "png");
@@ -268,6 +271,81 @@ export class PrintService {
     }
 
   }
+  */
+  private async image_split_n_save_gm(data: APIPrintingClientOrderToImageResponse) {
+    const { base64, width, height } = data; // deviceScaleFactor
+    const { file_path, doc_id } = await this.file_save(base64, "png");
+    setTimeout(() => this.file_remove(file_path), 160000);
+
+    const dimensions = imageSize(file_path);
+    const actualWidth = dimensions.width; // metadata.width as number; // the width of the image
+    const actualHeight = dimensions.height; // metadata.height as number; // the height of the image
+    const actualScaleFactor = actualWidth / width;
+    // const adjustedBaseWidth = width * actualScaleFactor;
+    const expectedPageHeight = Math.floor(height * actualScaleFactor); // the actual height required to be proportional to the width
+
+    if (actualHeight > expectedPageHeight) {
+
+      log("IMAGE: SPLIT MULTI PAGE");
+
+      // SPLIT IMAGES
+      const fileNames = [];
+
+      const cropX = 0;
+      const cropWidth = actualWidth;
+
+      let cropY = 0; // start crop
+      const cropHeight = expectedPageHeight; // end crop
+
+      let splitCount = 0;
+
+      let notDone = true;
+
+      while (notDone) {
+        const done = (cropY + cropHeight) >= actualHeight;
+        notDone = !done;
+        const file = `${this.save_folder}/${doc_id}-${splitCount}.png`;
+        fileNames.push(file);
+        if (done) {
+          // CROP THE SMALL REMAINING BIT AND EXTEND IT OUT TO FULL SIZE
+          const lastCropHeight = actualHeight - cropY;
+          const bufferFile = `${this.save_folder}/${doc_id}-buffer.png`;
+          setTimeout(() => this.file_remove(bufferFile), 160000);
+          await this.gm_crop(file_path, bufferFile, `${cropWidth}x${lastCropHeight}+${cropX}+${cropY}`);
+          await this.gm_extent(bufferFile, file, `${cropWidth}x${expectedPageHeight}`);
+        }
+        else {
+          await this.gm_crop(file_path, file, `${cropWidth}x${cropHeight}+${cropX}+${cropY}`);
+        }
+        cropY += expectedPageHeight;
+        splitCount++;
+      }
+
+      return fileNames;
+
+    }
+    else if (actualHeight === expectedPageHeight) {
+      log("IMAGE: CORRECT HEIGHT");
+      return [ file_path ];
+    }
+    else {
+      // RETURN SINGLE IMAGE AT FULL CORRECT LENGTH
+      log("IMAGE: EXTEND PAGE BY %s %s", actualHeight, expectedPageHeight - actualHeight);
+      const file = `${this.save_folder}/${doc_id}-0.png`;
+      await this.gm_extent(file_path, file, `${actualWidth}x${expectedPageHeight}`);
+      return [ file ];
+    }
+  }
+
+  private async gm_trim(input: string, output: string) {
+    await this.exec(`"${this.gm}"  convert -trim ${input} ${output}`);
+  }
+  private async gm_crop(input: string, output: string, cropString: string){
+    await this.exec(`"${this.gm}" convert -crop ${cropString} ${input} ${output}`);
+  }
+  private async gm_extent(input: string, output: string, extentString: string) {
+    await this.exec(`"${this.gm}" convert -extent ${extentString} "${input}" "${output}"`);
+  }
 
   private file_save(base64: string, extension: "pdf" | "png"): Promise<{ file_path: string; doc_id: string; }> {
     return new Promise((resolve, reject) => {
@@ -282,10 +360,11 @@ export class PrintService {
       });
     });
   }
-  private file_remove(path: string) {
-    fs.unlink(path, (err) => {
-      if (err)
-        logger.captureException(err, "ERROR DELETING FILE");
+  private file_remove(file: string) {
+    fs.unlink(file, (err) => {
+      if (err) {
+        log(err);
+      }
     });
   }
 

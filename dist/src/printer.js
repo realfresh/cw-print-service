@@ -15,14 +15,15 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const shelljs_1 = __importDefault(require("shelljs"));
 const shortid_1 = __importDefault(require("shortid"));
-const sharp_1 = __importDefault(require("sharp"));
 const debug_1 = __importDefault(require("debug"));
+const image_size_1 = __importDefault(require("image-size"));
 const autobind = require("class-autobind").default;
 const logger_1 = require("../libs/common/utils/logger");
 const log = debug_1.default("PRINTER");
 class PrintService {
     constructor(opts) {
         autobind(this);
+        this.gm = opts.gm;
         this.cache = opts.cache;
         this.save_folder = opts.save_folder;
         this.print_cli = path_1.default.resolve(__dirname, "../resources/PrintCLI.exe");
@@ -33,7 +34,7 @@ class PrintService {
                 return;
             }
             const { printers, copies, width, height } = data;
-            const image_files = yield this.image_split_n_save_sharp(data);
+            const image_files = yield this.image_split_n_save_gm(data);
             const scripts = [];
             for (const printer of printers) {
                 for (let i = 0; i < copies; i++) {
@@ -79,17 +80,16 @@ class PrintService {
         logger_1.logger.warn(`DUPLICATE JOB ID ${job_id}`);
         return false;
     }
-    image_split_n_save_sharp(data) {
+    image_split_n_save_gm(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const { base64, width, height } = data;
             const { file_path, doc_id } = yield this.file_save(base64, "png");
-            setTimeout(() => this.file_remove(file_path), 120000);
-            const baseImageBuffer = yield sharp_1.default(file_path).trim().toBuffer({ resolveWithObject: true });
-            const baseImage = sharp_1.default(baseImageBuffer.data);
-            const actualWidth = baseImageBuffer.info.width;
-            const actualHeight = baseImageBuffer.info.height;
+            setTimeout(() => this.file_remove(file_path), 160000);
+            const dimensions = image_size_1.default(file_path);
+            const actualWidth = dimensions.width;
+            const actualHeight = dimensions.height;
             const actualScaleFactor = actualWidth / width;
-            const expectedPageHeight = Math.round(height * actualScaleFactor);
+            const expectedPageHeight = Math.floor(height * actualScaleFactor);
             if (actualHeight > expectedPageHeight) {
                 log("IMAGE: SPLIT MULTI PAGE");
                 const fileNames = [];
@@ -102,33 +102,18 @@ class PrintService {
                 while (notDone) {
                     const done = (cropY + cropHeight) >= actualHeight;
                     notDone = !done;
-                    const img = baseImage.clone();
-                    if (done) {
-                        const lastCropHeight = actualHeight - cropY;
-                        img.extract({
-                            left: cropX,
-                            width: cropWidth,
-                            top: cropY,
-                            height: lastCropHeight,
-                        }).extend({
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: expectedPageHeight - lastCropHeight,
-                            background: { r: 255, b: 255, g: 255, alpha: 1 },
-                        });
-                    }
-                    else {
-                        img.extract({
-                            left: cropX,
-                            width: cropWidth,
-                            top: cropY,
-                            height: cropHeight,
-                        });
-                    }
                     const file = `${this.save_folder}/${doc_id}-${splitCount}.png`;
                     fileNames.push(file);
-                    yield img.png().toFile(file);
+                    if (done) {
+                        const lastCropHeight = actualHeight - cropY;
+                        const bufferFile = `${this.save_folder}/${doc_id}-buffer.png`;
+                        setTimeout(() => this.file_remove(bufferFile), 160000);
+                        yield this.gm_crop(file_path, bufferFile, `${cropWidth}x${lastCropHeight}+${cropX}+${cropY}`);
+                        yield this.gm_extent(bufferFile, file, `${cropWidth}x${expectedPageHeight}`);
+                    }
+                    else {
+                        yield this.gm_crop(file_path, file, `${cropWidth}x${cropHeight}+${cropX}+${cropY}`);
+                    }
                     cropY += expectedPageHeight;
                     splitCount++;
                 }
@@ -136,25 +121,29 @@ class PrintService {
             }
             else if (actualHeight === expectedPageHeight) {
                 log("IMAGE: CORRECT HEIGHT");
-                const img = baseImage.clone();
-                const file = `${this.save_folder}/${doc_id}-0.png`;
-                yield img.png().toFile(file);
-                return [file];
+                return [file_path];
             }
             else {
-                const img = baseImage.clone();
                 log("IMAGE: EXTEND PAGE BY %s %s", actualHeight, expectedPageHeight - actualHeight);
-                img.extend({
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: expectedPageHeight - actualHeight,
-                    background: { r: 255, b: 255, g: 255, alpha: 1 },
-                });
                 const file = `${this.save_folder}/${doc_id}-0.png`;
-                yield img.png().toFile(file);
+                yield this.gm_extent(file_path, file, `${actualWidth}x${expectedPageHeight}`);
                 return [file];
             }
+        });
+    }
+    gm_trim(input, output) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.exec(`"${this.gm}"  convert -trim ${input} ${output}`);
+        });
+    }
+    gm_crop(input, output, cropString) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.exec(`"${this.gm}" convert -crop ${cropString} ${input} ${output}`);
+        });
+    }
+    gm_extent(input, output, extentString) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.exec(`"${this.gm}" convert -extent ${extentString} "${input}" "${output}"`);
         });
     }
     file_save(base64, extension) {
@@ -170,10 +159,11 @@ class PrintService {
             });
         });
     }
-    file_remove(path) {
-        fs_1.default.unlink(path, (err) => {
-            if (err)
-                logger_1.logger.captureException(err, "ERROR DELETING FILE");
+    file_remove(file) {
+        fs_1.default.unlink(file, (err) => {
+            if (err) {
+                log(err);
+            }
         });
     }
     _exec(script) {
