@@ -10,8 +10,7 @@
     "deva": "cross-env DEBUG=* nodemon --ignore tests/ --exec ts-node --files --pretty src/index.ts",
     "dist-clean": "shx rm -rf dist/",
     "dist-build": "tsc",
-    "dist-move": "shx cp -r ./resources/ ./dist/resources",
-    "dist": "yarn dist-clean && yarn dist-build && yarn dist-move",
+    "dist": "yarn dist-clean && yarn dist-build",
     "print": "babel-node ./tests/print.test.js",
     "build": "shx rm -rf dist/ && babel src -d dist"
   },

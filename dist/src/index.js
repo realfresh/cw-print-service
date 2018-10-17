@@ -49,6 +49,7 @@ class AppService {
             cache: this.cache,
             gm: opts.paths.gm,
             save_folder: opts.paths.save,
+            print_cli: opts.paths.print_cli,
         });
         exitHook(this.stop);
         log("INITIALIZED");

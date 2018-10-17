@@ -23,7 +23,7 @@ export class PrintService {
     this.gm = opts.gm;
     this.cache = opts.cache;
     this.save_folder = opts.save_folder;
-    this.print_cli = path.resolve(__dirname, "../resources/PrintCLI.exe");
+    this.print_cli = opts.print_cli;
   }
 
   public async print_windows(data: PrintServicePrintWindowsOpts) {

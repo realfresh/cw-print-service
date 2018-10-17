@@ -4,6 +4,7 @@ const Service = new AppService({
   os: "windows",
   copies: 1,
   paths: {
+    print_cli: "C:\\Users\\danknugget\\Documents\\CloudWaitressApps\\cw-print-gui\\assets\\printcli\\PrintCLI.exe",
     gm: "C:\\Users\\danknugget\\Documents\\CloudWaitressApps\\cw-print-gui\\assets\\graphicsmagick\\gm.exe",
     save: "C:\\Users\\danknugget\\AppData\\Roaming\\PushPrinter\\temp-pdf-files",
   },

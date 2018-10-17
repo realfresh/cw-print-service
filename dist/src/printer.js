@@ -11,7 +11,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const shelljs_1 = __importDefault(require("shelljs"));
 const shortid_1 = __importDefault(require("shortid"));
@@ -26,7 +25,7 @@ class PrintService {
         this.gm = opts.gm;
         this.cache = opts.cache;
         this.save_folder = opts.save_folder;
-        this.print_cli = path_1.default.resolve(__dirname, "../resources/PrintCLI.exe");
+        this.print_cli = opts.print_cli;
     }
     print_windows(data) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -8,6 +8,7 @@ export interface AppServiceOptions {
   copies: number;
   paths: {
     gm: string;
+    print_cli: string;
     save: string;
   };
   api: {
@@ -22,6 +23,7 @@ export interface PrintServiceOptions {
   save_folder: string;
   cache: ReturnType<typeof CacheCreator>;
   gm: string;
+  print_cli: string;
 }
 
 export interface AppHandlePrinterJobOptions {
