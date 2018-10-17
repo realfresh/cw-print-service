@@ -56,10 +56,8 @@
     "class-autobind": "^0.1.4",
     "debug": "^4.1.0",
     "image-size": "^0.6.3",
-    "jimp": "^0.5.3",
     "lowdb": "^1.0.0",
     "raven": "^2.6.2",
-    "sharp": "^0.21.0",
     "shelljs": "^0.8.2",
     "shortid": "^2.2.8"
   }
