@@ -3,7 +3,7 @@ import axios from "axios";
 import Ably from "ably";
 import { PrintService } from "./printer";
 import { CacheCreator } from "./cache";
-import { logger } from "../libs/common/utils/logger";
+import {logger} from "./logger";
 import { AppHandlePrinterJobOptions, AppServiceEvents, AppServiceOptions } from "./types";
 import debug from "debug";
 const autobind = require("class-autobind").default;
@@ -300,7 +300,7 @@ export class AppService {
   }
 
   // API
-  private async api_get_job_pdf(query: any): Promise<APIPrintingClientOrderToPDFResponse> {
+  private async api_get_job_pdf(query: ObjectAny): Promise<APIReceiptConvertPDFResponse> {
     const { api_key, api } = this;
     const options = {
       headers: {
@@ -310,7 +310,8 @@ export class AppService {
     const res = await axios.post(api.receipt_pdf, { query }, options);
     return res.data;
   }
-  private async api_get_job_image(query: any): Promise<APIPrintingClientOrderToImageResponse> {
+
+  private async api_get_job_image(query: ObjectAny): Promise<APIReceiptConvertImageResponse> {
     const { api_key, api } = this;
     const options = {
       headers: {

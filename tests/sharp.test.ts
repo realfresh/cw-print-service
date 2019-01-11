@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import {logger} from "../libs/common/utils/logger";
+import {logger} from "../src/logger";
 
 describe("SHARP", () => {
 

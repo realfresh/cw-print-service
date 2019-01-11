@@ -1,11 +1,10 @@
-import path from "path";
 import fs from "fs";
 import shell from "shelljs";
 import shortid from "shortid";
 import debug from "debug";
 import imageSize from "image-size";
 const autobind = require("class-autobind").default;
-import { logger } from "../libs/common/utils/logger";
+import {logger} from "./logger";
 import {CacheCreator} from "./cache";
 import {PrintServicePrintLinuxOpts, PrintServicePrintWindowsOpts, PrintServiceOptions} from "./types";
 
@@ -272,7 +271,7 @@ export class PrintService {
 
   }
   */
-  private async image_split_n_save_gm(data: APIPrintingClientOrderToImageResponse) {
+  private async image_split_n_save_gm(data: APIReceiptConvertImageResponse) {
     const { base64, width, height } = data; // deviceScaleFactor
     const { file_path, doc_id } = await this.file_save(base64, "png");
     setTimeout(() => this.file_remove(file_path), 160000);

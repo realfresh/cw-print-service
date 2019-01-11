@@ -6,10 +6,11 @@ describe("SERVICE TEST", () => {
     expect(() => {
 
       const Service = new AppService({
-        os: "windows",
+        os: "linux",
         copies: 1,
         paths: {
-          save: "C:\\Users\\danknugget\\AppData\\Roaming\\PushPrinter\\temp-pdf-files",
+          gm: "",
+          save: "/media/danknugget/E802975C02972F16/Users/danknugget/Documents/CloudWaitressApps/cw-print-service/tmp/save",
           print_cli: "C:\\Users\\danknugget\\Documents\\CloudWaitressApps\\vs-print-cli\\PrintCLI\\PrintCLI\\bin\\Release\\PrintCLI.exe",
         },
         api: {

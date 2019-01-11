@@ -1,0 +1,3 @@
+[submodule "libs/types"]
+	path = libs/types
+	url = https://github.com/realfresh/cw-libs-types.git

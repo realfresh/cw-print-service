@@ -48,16 +48,10 @@
 
     "include": [
         "./src/**/*",
-        "./old/**/*",
-        "./libs/common/utils/logger",
-        "./libs/common/components/styled/theme.d.ts",
-        "./libs/common/types/core",
-        "./libs/common/types/api",
-        "./libs/common/types/schema"
+        "./libs/**/*"
     ],
     "exclude": [
-        "node_modules",
-        "node_modules/jimp"
+        "node_modules"
     ]
     
 }

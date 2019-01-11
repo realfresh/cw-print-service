@@ -3,10 +3,5 @@
   "plugins": [
     "transform-class-properties",
     "transform-object-rest-spread"
-  ],
-  "ignore": [
-    "src/bundle",
-    "src/public",
-    "src/build"
   ]
 }

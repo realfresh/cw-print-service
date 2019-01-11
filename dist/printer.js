@@ -1,23 +1,13 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
-const shelljs_1 = __importDefault(require("shelljs"));
-const shortid_1 = __importDefault(require("shortid"));
-const debug_1 = __importDefault(require("debug"));
-const image_size_1 = __importDefault(require("image-size"));
+const tslib_1 = require("tslib");
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const shelljs_1 = tslib_1.__importDefault(require("shelljs"));
+const shortid_1 = tslib_1.__importDefault(require("shortid"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
+const image_size_1 = tslib_1.__importDefault(require("image-size"));
 const autobind = require("class-autobind").default;
-const logger_1 = require("../libs/common/utils/logger");
+const logger_1 = require("./logger");
 const log = debug_1.default("PRINTER");
 class PrintService {
     constructor(opts) {
@@ -28,7 +18,7 @@ class PrintService {
         this.print_cli = opts.print_cli;
     }
     print_windows(data) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             if (!this.print_job_valid(data)) {
                 return;
             }
@@ -50,7 +40,7 @@ class PrintService {
         });
     }
     print_linux(data) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             if (!this.print_job_valid(data)) {
                 return;
             }
@@ -80,7 +70,7 @@ class PrintService {
         return false;
     }
     image_split_n_save_gm(data) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const { base64, width, height } = data;
             const { file_path, doc_id } = yield this.file_save(base64, "png");
             setTimeout(() => this.file_remove(file_path), 160000);
@@ -131,17 +121,17 @@ class PrintService {
         });
     }
     gm_trim(input, output) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.exec(`"${this.gm}"  convert -trim ${input} ${output}`);
         });
     }
     gm_crop(input, output, cropString) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.exec(`"${this.gm}" convert -crop ${cropString} ${input} ${output}`);
         });
     }
     gm_extent(input, output, extentString) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.exec(`"${this.gm}" convert -extent ${extentString} "${input}" "${output}"`);
         });
     }
@@ -178,7 +168,7 @@ class PrintService {
         });
     }
     exec(script) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             if (typeof script === "string") {
                 return yield this._exec(script);
             }
